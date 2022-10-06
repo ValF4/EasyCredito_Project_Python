@@ -4,70 +4,57 @@ from webdriver_manager.chrome import ChromeDriverManager
 from time import sleep
 
 
-URL = 'https://pt.aliexpress.com'
+URL_Main = 'https://pt.aliexpress.com'
 
 
 class Product:
     name = ''
     price = 0.0
-    priceIsValid = False
+    Url = ''
 
 
 def searchProduct(driver, product_text):
     driver.find_element('xpath', '//*[@id="search-key"]').send_keys(product_text)
     driver.find_element('xpath', '//*[@id="form-searchbar"]/div[1]/input').click()
-    last_height = driver.execute_script("return document.body.scrollHeight")
-
-    for rolled in range(10):
-        driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-        sleep(2)
-        new_height = driver.execute_script("return document.body.scrollHeight")
-        if new_height == last_height:
-            break
-
-        last_height = new_height
-
+    
     for roll in range(5):
         driver.execute_script('window.scrollTo(0, {});'.format(roll*1000))
 
 
-def getProductsInPage(driver):
-    browser = BeautifulSoup(driver.page_source, 'html.parser')
+def getItensInPage(driver):
+    page = BeautifulSoup(driver.page_source, 'html.parser')
     listProducts = []
-
-    elements = browser.find('div', attrs={'class': 'JIIxO'}).findAll('a', attrs={'class': '_3t7zg _2f4Ho'})
-
-    sleep(3)
+    price = ''
+    elements = page.find('div', attrs={'class': 'JIIxO'}).find_all('a', attrs={'class': '_3t7zg _2f4Ho'})
 
     for element in elements:
-        spans = element.find(
-            'div', attrs={'class': 'mGXnE _37W_B'}).findAll('span')
+        spans = element.find('div', attrs={'class': 'mGXnE _37W_B'}).find_all('span')
         
-        price = ''
-
-
-        for span in spans:
+        for span in spans: ## Extraindo preço
             price = price + span.getText()
 
-
-        product = Product()
+        product = Product() ## Extraindo Nome
         product.name = element.find('h1').getText()
+        listProducts.append(product.name)
 
+        product.Url = element.find('div', attrs={'class': '_3t7zg _2f4Ho'}).find.all('href')
+        print(product.Url)
+
+        product.name = element.find()
 
         if len(price) > 3:
             product.price = float(price.replace('R$', '').replace('.', '').replace(',', '.'))
-            product.priceIsValid = True
 
         listProducts.append(product)
-
+ 
     return listProducts
 
 
 def main():
     browser = webdriver.Chrome(ChromeDriverManager().install())
-    browser.get(URL)
+    browser.get(URL_Main)
     searchProduct(browser, 'redmi')
-    listProducts = getProductsInPage(browser)
+    listProducts = getItensInPage(browser)
 
 
 if __name__ == "__main__":
