@@ -12,7 +12,6 @@ URL_Main = 'https://pt.aliexpress.com'
 class Product:
     name = ''
     price = 0.0
-    Url = ''
     priceIsValid = False
 
 # Função Main(Principal)
@@ -32,34 +31,29 @@ def scroll_down(driver):
 # Raspando as informações
 def getItensInPage(driver):
     listProducts = []
-    price, url= ''
+    price= ''
     page = BeautifulSoup(driver.page_source, 'html.parser')
     elements = page.find('div', attrs={'class': 'JIIxO'}).find_all('a', attrs={'class': '_3t7zg _2f4Ho'})
 
     for element in elements:
         
         price_products = element.find('div', attrs={'class': 'mGXnE _37W_B'}).find_all('span')
-        link_products = element.find('div', attrs={'class': '_3t7zg _2f4Ho'}).find_all('href')
         
         for name in price_products: ## Extraindo preço
             price = price + name.getText()
 
-        for link in link_products:
-            url = url + name.getText()
-            
         product = Product() ## Extraindo Nome
         product.name = element.find('h1').getText()
-        listProducts.append(product.name)
-        product.name = element.find()
 
-        if len(price) > 3:
+        if len(price_products) > 3:
             product.price = float(price.replace('R$', '').replace('.', '').replace(',', '.'))
             product.priceIsValid = True
 
-        listProducts.append(product)
+        listProducts.append(product.price)
+        listProducts.append(product.name)
  
     return listProducts
 
-
+# Executar codigo via terminal
 if __name__ == "__main__":
     main()
