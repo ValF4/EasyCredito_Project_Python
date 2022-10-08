@@ -3,6 +3,7 @@ from selenium import webdriver
 from bs4 import BeautifulSoup
 from webdriver_manager.chrome import ChromeDriverManager
 from time import sleep
+import db_connect
 
 # Variaveis Globais
 product_text = 'redmi'
@@ -13,21 +14,25 @@ class Product:
     name = ''
     price = 0.0
     url = ''
-    priceIsValid = False
 
 # Função Main(Principal)
 def main():
     browser = webdriver.Chrome(ChromeDriverManager().install())
     browser.get(URL_Main)
-    browser.find_element('xpath', '//*[@id="search-key"]').send_keys(product_text)
-    browser.find_element('xpath', '//*[@id="form-searchbar"]/div[1]/input').click()
+    search(browser, product_text)
     scroll_down(browser)
     listProducts = getItensInPage(browser)
+    db_connect.insert_products(listProducts)
+    select_list = db_connect.execute_query_select('SELECT name, price, url from public.products  order by price limit 5')
+    
+def search(driver, item):
+    driver.find_element('xpath', '//*[@id="search-key"]').send_keys(item)
+    driver.find_element('xpath', '//*[@id="form-searchbar"]/div[1]/input').click()
 
 # Função de descida da pagiona
 def scroll_down(driver):
-    for roll in range(5):
-        driver.execute_script('window.scrollTo(0, {});'.format(roll*1000))
+    for roll in range(6):
+        driver.execute_script('window.scrollTo(0, {});'.format(roll*1080))
 ''
 # Raspando as informações
 def getItensInPage(driver):
@@ -44,13 +49,13 @@ def getItensInPage(driver):
 
         product = Product() ## Extraindo Nome
         product.name = element.find('h1').getText()
-        product.url = element.find('href')
+        product.url = element.attrs['href'].replace('//', 'https://') ## Extraindo as URLS
 
-        if len(price) > 3:
+        if len(price) > 3: ## Validação do valor para enviar para o banco de dados
             product.price = float(price.replace('R$', '').replace('.', '').replace(',', '.'))
             product.priceIsValid = True
 
-        listProducts.append([product.name] [product.price])
+        listProducts.append(product)
  
     return listProducts
 
