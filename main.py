@@ -23,7 +23,7 @@ def main():
     scroll_down(browser)
     listProducts = getItensInPage(browser)
     db_connect.insert_products(listProducts)
-    select_list = db_connect.execute_query_select('SELECT name, price, url from public.products  order by price limit 5')
+    select_list = db_connect.execute_query_select('SELECT name, price, url from public.products order by price limit 5')
     
 def search(driver, item):
     driver.find_element('xpath', '//*[@id="search-key"]').send_keys(item)
