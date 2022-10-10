@@ -1,9 +1,9 @@
-import main, json, psycopg2
+import main, psycopg2
 from datetime import datetime
 
 def db_connect():
     _host = "localhost"
-    _port = 15432
+    _port = 5432
     _user = "postgres"
     _pass = "postgres"
 
@@ -18,6 +18,10 @@ def execute_query_insert(query):
     finally:
         conn.close()
 
+def insert_products(products):
+    for product in products:
+        query = f"INSERT INTO public.product ( name, price, url) VALUES ('{product.name}', {product.price}, '{product.url}')"
+        execute_query_insert(query)
 
 def execute_query_select(query):
     conn = db_connect()
@@ -38,11 +42,5 @@ def execute_query_select(query):
     finally:
         conn.close()
 
-
-def insert_products(products):
-    for product in products:
-        query = f"INSERT INTO public.products ( name, price, url) VALUES ('{product.name}', {product.price}, '{product.url}')"
-        execute_query_insert(query)
-
 if __name__ == "__main__":
-    db_connect()
+    db_connect() 
