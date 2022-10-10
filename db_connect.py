@@ -42,5 +42,6 @@ def execute_query_select(query):
     finally:
         conn.close()
 
+
 if __name__ == "__main__":
     db_connect() 

@@ -3,7 +3,7 @@ from selenium import webdriver
 from bs4 import BeautifulSoup
 from webdriver_manager.chrome import ChromeDriverManager
 from time import sleep
-import db_connect
+import db_connect, post_email
 
 # Variaveis Globais
 product_text = 'redmi'
@@ -24,7 +24,9 @@ def main():
     listProducts = getItensInPage(browser)
     db_connect.insert_products(listProducts)
     select_list = db_connect.execute_query_select('SELECT name, price, url from public.product order by price limit 5')
-    print(db_connect.list)
+    
+    post_email.send_email()
+
     
 def search(driver, item):
     driver.find_element('xpath', '//*[@id="search-key"]').send_keys(item)
