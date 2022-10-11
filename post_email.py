@@ -3,7 +3,7 @@ import smtplib, email.message, main, db_connect
 Email_Subject = f"Melhores preços de hoje produto: {main.product_text}"
 Email_sender = "" # Email que será enviado
 Email_addressee = "" ## Email para envio
-password = "lucas990230"
+password = "" ## Senha do email de envio
 
 def send_email():
     body_email = f"""
