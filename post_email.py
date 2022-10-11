@@ -1,15 +1,15 @@
 import smtplib, email.message, main, db_connect
 
-Email_Subject = "Melhores preços de hoje produto: Redmi"
-Email_sender = "xxvalkemgamerxx@gmail.com"
-Email_addressee = "braullio.goncalves@easyc.com.br"
+Email_Subject = f"Melhores preços de hoje produto: {main.product_text}"
+Email_sender = "" # Email que será enviado
+Email_addressee = "" ## Email para envio
 password = "lucas990230"
 
 def send_email():
-    body_email = """
+    body_email = f"""
     <p>Olá Sr. Braullio, como vai? espero que esteja bem.</p>
 
-    <p>Estou lhe enviando os melhores preços dos Produtos Redmi de hoje, Aproveite as ofertas limitadas.</p>
+    <p>Estou lhe enviando os melhores preços dos Produtos {main.product_text} de hoje, Aproveite as ofertas limitadas.</p>
 
     <p>Abs</p>
     <p>Melhorespreços.com</p>
@@ -22,10 +22,10 @@ def send_email():
     msg.add_header('Content-Type', 'text/html')
     msg.set_payload(send_email)
 
-   ## s = smtplib.SMTP('smtp.gmail.com: 587')
-   ## s.starttls()
-   ## s.login(msg['From'], password)
-   ## s.sendmail(msg['From'], [msg['To']], msg.as_string().encode('utf-8'))
-   ## print(f"Email Enviando para {Email_addressee} com sucesso")
+    s = smtplib.SMTP('smtp.gmail.com: 587')
+    s.starttls()
+    s.login(msg['From'], password)
+    s.sendmail(msg['From'], [msg['To']], msg.as_string().encode('utf-8'))
+    print(f"Email Enviando para {Email_addressee} com sucesso")
 
 send_email()
